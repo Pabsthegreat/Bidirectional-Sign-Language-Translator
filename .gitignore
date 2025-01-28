@@ -1,0 +1,43 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.so
+
+# Virtual environment folders
+env/
+venv/
+
+# Data files (optional, if you have large datasets to exclude)
+*.csv
+*.tsv
+*.json
+*.xml
+*.zip
+
+# TensorFlow checkpoints
+checkpoints/
+
+# Logs and outputs
+*.log
+*.out
+*.txt
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE/editor-specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.bak
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Model files (optional)
+*.h5
+*.pb
+*.tflite
+*.onnx
