@@ -1,33 +1,42 @@
 import cv2
-import mediapipe as mp
+from tensorflow.keras.models import load_model
+import numpy as np
 
-# Initialize MediaPipe Hands
-mp_hands = mp.solutions.hands
-hands = mp_hands.Hands()
+# Load the model
+model = load_model("models/gesture_recognition_model.h5")
+labels = ['A', 'B', 'C', ...]  # Replace with your dataset labels
 
-# Initialize OpenCV for webcam
+# Initialize the camera
 cap = cv2.VideoCapture(0)
 
-while cap.isOpened():
+while True:
     ret, frame = cap.read()
+    if not ret:
+        break
 
-    # Convert the frame to RGB (MediaPipe needs RGB images)
-    frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    # Detect hand using your hand_detection module (placeholder function here)
+    hand_roi = detect_hand(frame)  # Replace with your actual function
 
-    # Process the frame and get hand landmarks
-    result = hands.process(frame_rgb)
+    if hand_roi is not None:
+        # Preprocess ROI
+        hand_roi = cv2.resize(hand_roi, (64, 64))
+        hand_roi = hand_roi / 255.0
+        hand_roi = np.expand_dims(hand_roi, axis=0)
 
-    # Draw landmarks on the hands
-    if result.multi_hand_landmarks:
-        for hand_landmarks in result.multi_hand_landmarks:
-            mp.solutions.drawing_utils.draw_landmarks(
-                frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
+        # Predict gesture
+        prediction = model.predict(hand_roi)
+        class_index = np.argmax(prediction)
+        gesture = labels[class_index]
 
-    # Display the output
-    cv2.imshow("Hand Tracking", frame)
+        # Display result
+        cv2.putText(frame, f"Gesture: {gesture}", (50, 50),
+                    cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
 
-    # Close window on pressing ESC
-    if cv2.waitKey(1) & 0xFF == 27:
+    # Display the frame
+    cv2.imshow("Sign Language Translator", frame)
+
+    # Exit on 'q' key
+    if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
 cap.release()
